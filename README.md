@@ -1,5 +1,5 @@
 # url-object
-An URL value object to use in your favourite functional err, functions!
+An URL value object to use in your favourite functional err, functions! Some inspiration taken from https://developer.mozilla.org/en-US/docs/Web/API/URL/URL
 
 ## Installing
 ```sh
