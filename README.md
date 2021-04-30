@@ -41,3 +41,6 @@ $allParameters = $url->getParameters();
 
 $aSpecificParameter = $url->getParameter('this');
 // Will return the "this" `\tr33m4n\UrlObject\UrlParameter`
+
+echo $aSpecificParameter->getValue();
+// "test"
