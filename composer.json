@@ -1,0 +1,40 @@
+{
+    "name": "tr33m4n/url-object",
+    "description": "Conveniently manipulate an URL string",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Doyle",
+            "email": "tr33m4n@googlemail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "tr33m4n\\UrlObject\\": "src/"
+        }
+    },
+    "require-dev": {
+        "adamwojs/php-cs-fixer-phpdoc-force-fqcn": "^1.1",
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "phpstan/phpstan": "^0.12.9",
+        "rector/rector": "^0.8.56",
+        "squizlabs/php_codesniffer": "^3.6"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "fix": "vendor/bin/rector process && vendor/bin/php-cs-fixer fix --diff",
+        "test:lint": "vendor/bin/rector process --dry-run && vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "test:static": "vendor/bin/phpstan analyse --no-interaction --no-progress && vendor/bin/phpcs --standard=PSR12 ./src",
+        "test": [
+            "@test:lint",
+            "@test:static"
+        ]
+    }
+}
