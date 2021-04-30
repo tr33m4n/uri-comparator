@@ -33,3 +33,11 @@ $url = \tr33m4n\UrlObject\Url::fromString('https://example.com:1234');
 echo (string) $url->withHost('not-example.com');
 // https://not-example.com:1234
 ```
+### Getting URL params
+```php
+$url = \tr33m4n\UrlObject\Url::fromString('https://example.com:1234?this=test&another=something');
+$allParameters = $url->getParameters();
+// Will return an array of `\tr33m4n\UrlObject\UrlParameter`'s
+
+$aSpecificParameter = $url->getParameter('this');
+// Will return the "this" `\tr33m4n\UrlObject\UrlParameter`
