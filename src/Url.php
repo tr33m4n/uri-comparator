@@ -84,19 +84,18 @@ class Url
             throw new UrlException(sprintf('"%s" is not a valid URL', $url));
         }
 
-        $urlParts = parse_url($url);
-        if (!$urlParts) {
+        if (!$urlParts = parse_url($url)) {
             throw new UrlException(sprintf('"%s" is not a valid URL', $url));
         }
 
         return array_reduce(
             array_keys($urlParts),
             static function (Url $url, string $urlPartKey) use ($urlParts) {
-                if (!method_exists($url, 'with' . ucfirst($urlPartKey))) {
+                if (!method_exists($url, $method = 'with' . ucfirst($urlPartKey))) {
                     return $url;
                 }
 
-                return $url = $url->{'with' . ucfirst($urlPartKey)}($urlParts[$urlPartKey]);
+                return $url = $url->$method($urlParts[$urlPartKey]);
             },
             new self()
         );
@@ -342,6 +341,17 @@ class Url
     }
 
     /**
+     * Compare this URL with others
+     *
+     * @param string|\tr33m4n\UrlObject\Url ...$urls
+     * @return \tr33m4n\UrlObject\Comparator
+     */
+    public function compareWith(...$urls): Comparator
+    {
+        return call_user_func_array([Comparator::class, 'compare'], array_merge([$this], $urls));
+    }
+
+    /**
      * Concatenate properties to string
      *
      * @return string
@@ -357,16 +367,18 @@ class Url
             $this->getPort() ? ':' . $this->getPort() : '',
             $this->getPath() ? ltrim($this->getPath() ?? '', '/') : '',
             !empty($this->getParameters())
-                ? '?' . http_build_query(array_reduce(
-                    $this->getParameters(),
-                    static function (array $parametersAsArray, UrlParameter $urlParameter): array {
-                        return $parametersAsArray = array_merge(
-                            $parametersAsArray,
-                            [$urlParameter->getKey() => $urlParameter->getValue()]
-                        );
-                    },
-                    []
-                ))
+                ? '?' . http_build_query(
+                    array_reduce(
+                        $this->getParameters(),
+                        static function (array $parametersAsArray, UrlParameter $urlParameter): array {
+                            return $parametersAsArray = array_merge(
+                                $parametersAsArray,
+                                [$urlParameter->getKey() => $urlParameter->getValue()]
+                            );
+                        },
+                        []
+                    )
+                )
                 : '',
             $this->getFragment() ? '#' . $this->getFragment() : ''
         );

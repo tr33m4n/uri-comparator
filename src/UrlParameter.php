@@ -12,7 +12,7 @@ namespace tr33m4n\UrlObject;
 class UrlParameter
 {
     /**
-     * @var string|null
+     * @var string
      */
     private $key;
 
@@ -62,9 +62,9 @@ class UrlParameter
     /**
      * Get key
      *
-     * @return string|null
+     * @return string
      */
-    public function getKey(): ?string
+    public function getKey(): string
     {
         return $this->key;
     }
