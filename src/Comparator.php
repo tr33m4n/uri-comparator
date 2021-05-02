@@ -36,6 +36,17 @@ class Comparator
      */
     public static function compare(...$uris): Comparator
     {
+        return self::compareArray($uris);
+    }
+
+    /**
+     * Compare array of URLs
+     *
+     * @param string[]|\Psr\Http\Message\UriInterface[] $uris
+     * @return \tr33m4n\UriComparator\Comparator
+     */
+    public static function compareArray(array $uris): Comparator
+    {
         $comparator = new self();
         $comparator->uris = array_map(static function ($uri) {
             return !$uri instanceof UriInterface ? Http::createFromString($uri) : $uri;

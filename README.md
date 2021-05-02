@@ -12,7 +12,8 @@ $comparator = \tr33m4n\UriComparator\Comparator::compare(
     'https://example.com:1234',
     'https://another-example.com:1234?this=test&another=something',
     \League\Uri\Http::createFromString('https://example.com:1234'),
-    \League\Uri\Http::createFromString('https://another-example.com:1234?this=test&another=something')
+    \League\Uri\Uri::createFromString('https://another-example.com:1234?this=test&another=something')
+    // An instance of `\Psr\Http\Message\UriInterface`
     // etc...
 );
 
@@ -24,4 +25,12 @@ var_dump($comparator->matchPath());
 // bool(false)
 // bool(true)
 // bool(true)
+
+// From array of URI's
+$comparator = \tr33m4n\UriComparator\Comparator::compareArray([
+    'https://example.com:1234',
+    'https://another-example.com:1234?this=test&another=something',
+    \League\Uri\Http::createFromString('https://example.com:1234'),
+    \League\Uri\Uri::createFromString('https://another-example.com:1234?this=test&another=something')
+]);
 ```
