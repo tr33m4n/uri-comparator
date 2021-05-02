@@ -1,6 +1,6 @@
 {
-    "name": "tr33m4n/url-object",
-    "description": "Conveniently manipulate an URL string",
+    "name": "tr33m4n/uri-comparator",
+    "description": "A basic comparator for PSR-7 URI objects",
     "license": "MIT",
     "authors": [
         {
@@ -10,11 +10,12 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.2"
+        "php": "^7.2",
+        "league/uri": "^6.4"
     },
     "autoload": {
         "psr-4": {
-            "tr33m4n\\UrlObject\\": "src/"
+            "tr33m4n\\UriComparator\\": "src/"
         }
     },
     "require-dev": {

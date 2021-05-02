@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace tr33m4n\UrlObject;
+namespace tr33m4n\UriComparator;
 
 use Closure;
+use League\Uri\Http;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Class Comparator
  *
- * @package tr33m4n\UrlObject
+ * @package tr33m4n\UriComparator
  */
 class Comparator
 {
     /**
-     * @var \tr33m4n\UrlObject\Url[]
+     * @var \Psr\Http\Message\UriInterface[]
      */
-    private $urls;
+    private $uris;
 
     /**
      * Comparator constructor.
@@ -29,29 +31,28 @@ class Comparator
     /**
      * Compare multiple URLs
      *
-     * @throws \tr33m4n\UrlObject\Exception\UrlException
-     * @param string|\tr33m4n\UrlObject\Url ...$urls
-     * @return \tr33m4n\UrlObject\Comparator
+     * @param string|\Psr\Http\Message\UriInterface ...$uris
+     * @return \tr33m4n\UriComparator\Comparator
      */
-    public static function compare(...$urls): Comparator
+    public static function compare(...$uris): Comparator
     {
         $comparator = new self();
-        $comparator->urls = array_map(static function ($url) {
-            return !$url instanceof Url ? Url::fromString($url) : $url;
-        }, $urls);
+        $comparator->uris = array_map(static function ($uri) {
+            return !$uri instanceof UriInterface ? Http::createFromString($uri) : $uri;
+        }, $uris);
 
         return $comparator;
     }
 
     /**
-     * Check whether entire URL strings match
+     * Check whether entire string representation of the URIs match
      *
      * @return bool
      */
-    public function match(): bool
+    public function matchAll(): bool
     {
-        return $this->equals(static function (Url $url): string {
-            return (string) $url;
+        return $this->equals(static function (UriInterface $uri): string {
+            return (string) $uri;
         });
     }
 
@@ -62,32 +63,32 @@ class Comparator
      */
     public function matchScheme(): bool
     {
-        return $this->equals(static function (Url $url): ?string {
-            return $url->getScheme();
+        return $this->equals(static function (UriInterface $uri): string {
+            return $uri->getScheme();
         });
     }
 
     /**
-     * Check whether all users match
+     * Check whether all authority's match
      *
      * @return bool
      */
-    public function matchUser(): bool
+    public function matchAuthority(): bool
     {
-        return $this->equals(static function (Url $url): ?string {
-            return $url->getUser();
+        return $this->equals(static function (UriInterface $uri): string {
+            return $uri->getAuthority();
         });
     }
 
     /**
-     * Check whether all passwords match
+     * Check whether all user info matches
      *
      * @return bool
      */
-    public function matchPass(): bool
+    public function matchUserInfo(): bool
     {
-        return $this->equals(static function (Url $url): ?string {
-            return $url->getPass();
+        return $this->equals(static function (UriInterface $uri): string {
+            return $uri->getUserInfo();
         });
     }
 
@@ -98,8 +99,8 @@ class Comparator
      */
     public function matchHost(): bool
     {
-        return $this->equals(static function (Url $url): ?string {
-            return $url->getHost();
+        return $this->equals(static function (UriInterface $uri): string {
+            return $uri->getHost();
         });
     }
 
@@ -110,8 +111,8 @@ class Comparator
      */
     public function matchPort(): bool
     {
-        return $this->equals(static function (Url $url): ?int {
-            return $url->getPort();
+        return $this->equals(static function (UriInterface $uri): ?int {
+            return $uri->getPort();
         });
     }
 
@@ -122,36 +123,20 @@ class Comparator
      */
     public function matchPath(): bool
     {
-        return $this->equals(static function (Url $url): ?string {
-            return $url->getPath();
+        return $this->equals(static function (UriInterface $uri): string {
+            return $uri->getPath();
         });
     }
 
     /**
-     * Check whether all parameters match
+     * Check whether all queries match
      *
      * @return bool
      */
-    public function matchParameters(): bool
+    public function matchQuery(): bool
     {
-        return $this->equals(static function (Url $url) {
-            $parameters = $url->getParameters();
-            usort($parameters, static function (UrlParameter $urlParameterA, UrlParameter $urlParameterB) {
-                return strcmp($urlParameterA->getKey(), $urlParameterB->getKey());
-            });
-
-            return http_build_query(
-                array_reduce(
-                    $parameters,
-                    static function (array $parametersAsArray, UrlParameter $urlParameter): array {
-                        return $parametersAsArray = array_merge(
-                            $parametersAsArray,
-                            [$urlParameter->getKey() => $urlParameter->getValue()]
-                        );
-                    },
-                    []
-                )
-            );
+        return $this->equals(static function (UriInterface $uri): string {
+            return $uri->getQuery();
         });
     }
 
@@ -162,8 +147,8 @@ class Comparator
      */
     public function matchFragment(): bool
     {
-        return $this->equals(static function (Url $url): ?string {
-            return $url->getFragment();
+        return $this->equals(static function (UriInterface $uri): string {
+            return $uri->getFragment();
         });
     }
 
@@ -177,9 +162,9 @@ class Comparator
     {
         return count(
             array_unique(
-                array_map(static function (Url $url) use ($callback) {
-                    return $callback($url);
-                }, $this->urls)
+                array_map(static function (UriInterface $uri) use ($callback) {
+                    return $callback($uri);
+                }, $this->uris)
             )
         ) === 1;
     }
